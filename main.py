@@ -8,8 +8,7 @@ import os
 from src.etl_pipeline import *
 
 def setup_logging():
-    """Basic logging setup"""
-
+    
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s - %(levelname)s - %(message)s',

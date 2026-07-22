@@ -7,13 +7,14 @@ from pyspark.sql.functions import *
 logger = logging.getLogger(__name__)
 
 def create_spark_session() : 
+    """Created spark instance"""
     return SparkSession.builder \
     .appName("Sales ETL") \
     .master("local[*]") \
     .getOrCreate()
 
 def extract_sales_data(spark, input_path) :
-    
+    """"Extracted data from csv file"""
     logger.info(f"Reading sales data from {input_path}")
 
 
@@ -30,7 +31,7 @@ def extract_sales_data(spark, input_path) :
     return df
 
 def standardize_dates(df):
-
+    """"Standardize date into yyyy-MM--dd form"""
     fmt1 = to_date(try_to_timestamp(col("order_date"), lit("yyyy-MM-dd")))
     fmt2 = to_date(try_to_timestamp(col("order_date"), lit("MM/dd/yyyy")))
     fmt3 = to_date(try_to_timestamp(col("order_date"), lit("M/d/yyyy")))
@@ -49,7 +50,7 @@ def standardize_dates(df):
     return df.drop("order_date")
 
 def handle_duplicates(df):
-
+    """"Deleted duplicate rows"""
     df_deduped = df.dropDuplicates(["order_id"])
 
     duplicate_count = df.count() - df_deduped.count()
@@ -98,7 +99,7 @@ def load_to_csv(spark, df, output_path):
     return len(pandas_df)
 
 def create_summary_report(df):
-
+    """Summarize sales data"""
     summary = {
         "total_orders": df.count(),
         "unique_customers": df.select("customer_id").distinct().count(),
